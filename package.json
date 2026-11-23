@@ -1,0 +1,75 @@
+{
+  "name": "@meritt/yamb-render-html",
+  "version": "0.1.0",
+  "description": "HTML views for Yamb posts with optional preparation",
+  "keywords": [
+    "blog",
+    "html",
+    "markdown",
+    "renderer",
+    "yamb"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Alexey Simonenko",
+    "email": "alexey@simonenko.dev",
+    "url": "https://simonenko.xyz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yamb/render-html.git"
+  },
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#core": "yamb",
+    "#core/*": "yamb/*"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./errors": "./src/errors/index.js",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "test": "node scripts/run-tests.mjs",
+    "test:watch": "node --test --watch --test-concurrency=1 'test/**/*.test.js'",
+    "test:perf": "node --expose-gc --test --test-concurrency=1 'test/perf/**/*.test.js'"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@meritt/yamb-markdown": "0.1.0",
+    "@meritt/yamb-microtypo": "0.1.0",
+    "@meritt/yamb-render-json": "0.1.0",
+    "@meritt/yamb-storage-mongo": "0.1.0",
+    "@meritt/yamb-storage-sqlite": "0.1.0",
+    "mongodb": "7.9.1",
+    "oxfmt": "0.80.0",
+    "oxlint": "1.95.0",
+    "yamb": "1.0.0"
+  },
+  "peerDependencies": {
+    "yamb": "^1.0.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26.13.1",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=26.13.0"
+  },
+  "packageManager": "pnpm@12.23.0"
+}
