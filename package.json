@@ -1,6 +1,6 @@
 {
-  "name": "@meritt/yamb-render-html",
-  "version": "0.1.0",
+  "name": "yamb-render-html",
+  "version": "0.1.1",
   "description": "HTML views for Yamb posts with optional preparation",
   "keywords": [
     "blog",
@@ -48,15 +48,15 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@meritt/yamb-markdown": "0.1.0",
-    "@meritt/yamb-microtypo": "0.1.0",
-    "@meritt/yamb-render-json": "0.1.0",
-    "@meritt/yamb-storage-mongo": "0.1.0",
-    "@meritt/yamb-storage-sqlite": "0.1.0",
     "mongodb": "7.9.1",
     "oxfmt": "0.80.0",
     "oxlint": "1.95.0",
-    "yamb": "1.0.0"
+    "yamb": "1.0.0",
+    "yamb-markdown": "0.1.2",
+    "yamb-microtypo": "0.1.2",
+    "yamb-render-json": "0.1.2",
+    "yamb-storage-mongo": "0.1.2",
+    "yamb-storage-sqlite": "0.1.1"
   },
   "peerDependencies": {
     "yamb": "^1.0.0"

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { access } from 'node:fs/promises';
 
-import { sqlite } from '@meritt/yamb-storage-sqlite';
 import { yamb } from 'yamb';
+import { sqlite } from 'yamb-storage-sqlite';
 
 import { html } from '../src/index.js';
 import { content } from './helpers/content.js';

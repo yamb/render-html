@@ -1,4 +1,4 @@
-# @meritt/yamb-render-html
+# yamb-render-html
 
 [![npm version][npm-image]][npm-url] [![Build status][github-actions-image]][github-actions-url] [![Coverage status][coveralls-image]][coveralls-url] [![Dependency status][libraries-image]][libraries-url]
 
@@ -11,11 +11,11 @@ For GitHub Packages, route the `@yamb` scope to `https://npm.pkg.github.com` and
 Requires Node.js 26.13 or later and `yamb`. Direct rendering needs no storage.
 
 ```bash
-pnpm add yamb @meritt/yamb-render-html
+pnpm add yamb yamb-render-html
 ```
 
 ```js
-import { html } from '@meritt/yamb-render-html';
+import { html } from 'yamb-render-html';
 
 const source = {
   uri: '2026/11/hello',
@@ -47,13 +47,13 @@ Register `renderers: { html: html() }` in the [Yamb configuration](https://githu
 For Markdown and typography, add the preparation stages.
 
 ```bash
-pnpm add @meritt/yamb-markdown @meritt/yamb-microtypo
+pnpm add yamb-markdown yamb-microtypo
 ```
 
 ```js
-import { markdown } from '@meritt/yamb-markdown';
-import { microtypo } from '@meritt/yamb-microtypo';
-import { html } from '@meritt/yamb-render-html';
+import { markdown } from 'yamb-markdown';
+import { microtypo } from 'yamb-microtypo';
+import { html } from 'yamb-render-html';
 import { prepare } from 'yamb/transform';
 
 await using md = markdown();
@@ -122,11 +122,11 @@ Invalid source or prepared fields fail with `YAMB_RENDERER_INPUT`. Direct `rende
 
 MIT. See `LICENSE`.
 
-[npm-image]: https://img.shields.io/npm/v/@meritt/yamb-render-html?style=flat
-[npm-url]: https://www.npmjs.com/package/@meritt/yamb-render-html
+[npm-image]: https://img.shields.io/npm/v/yamb-render-html?style=flat
+[npm-url]: https://www.npmjs.com/package/yamb-render-html
 [github-actions-image]: https://github.com/yamb/render-html/actions/workflows/ci.yml/badge.svg
 [github-actions-url]: https://github.com/yamb/render-html/actions/workflows/ci.yml
 [coveralls-image]: https://coveralls.io/repos/github/yamb/render-html/badge.svg
 [coveralls-url]: https://coveralls.io/github/yamb/render-html
-[libraries-image]: https://img.shields.io/librariesio/release/npm/%40meritt%2Fyamb-render-html?style=flat
-[libraries-url]: https://libraries.io/npm/%40meritt%2Fyamb-render-html
+[libraries-image]: https://img.shields.io/librariesio/release/npm/yamb-render-html?style=flat
+[libraries-url]: https://libraries.io/npm/yamb-render-html

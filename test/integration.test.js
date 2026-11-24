@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { markdown } from '@meritt/yamb-markdown';
+import { markdown } from 'yamb-markdown';
 import { prepare } from 'yamb/transform';
 
 import { html } from '../src/index.js';

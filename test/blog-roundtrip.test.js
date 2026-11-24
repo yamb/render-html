@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
-import { html } from '@meritt/yamb-render-html';
 import { yamb } from 'yamb';
+import { html } from 'yamb-render-html';
 
 import { content } from './helpers/content.js';
 import { mongodb, test } from './prepared-mongodb.js';
