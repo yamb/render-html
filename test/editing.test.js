@@ -13,8 +13,8 @@ const EditingOptionsSchema = z.strictObject({
 });
 
 test('built-in renderers export live data and current published related URIs', async () => {
-  const { html } = await import('@meritt/yamb-render-html');
-  const { json } = await import('@meritt/yamb-render-json');
+  const { html } = await import('yamb-render-html');
+  const { json } = await import('yamb-render-json');
   const blog = await blogWith([], { options: EditingOptionsSchema });
   const ctx = { yamb: blog, timeZone: 'UTC', base: new URL('https://example.com/') };
 

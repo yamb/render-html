@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { html } from '@meritt/yamb-render-html';
-import { json } from '@meritt/yamb-render-json';
+import { html } from 'yamb-render-html';
+import { json } from 'yamb-render-json';
 import { z } from 'zod';
 
 import { content } from './helpers/content.js';

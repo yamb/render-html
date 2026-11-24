@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 
-import { markdown } from '@meritt/yamb-markdown';
 import { Post } from 'yamb';
+import { markdown } from 'yamb-markdown';
 import { prepare } from 'yamb/transform';
 
 import { html } from '../../src/index.js';

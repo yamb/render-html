@@ -1,5 +1,5 @@
-import { markdown } from '@meritt/yamb-markdown';
-import { microtypo } from '@meritt/yamb-microtypo';
+import { markdown } from 'yamb-markdown';
+import { microtypo } from 'yamb-microtypo';
 import { prepare } from 'yamb/transform';
 
 export function content(t) {
