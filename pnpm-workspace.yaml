@@ -3,7 +3,11 @@ minimumReleaseAgeStrict: true
 minimumReleaseAgeIgnoreMissingTime: false
 minimumReleaseAgeExclude:
   - 'yamb'
-  - 'yamb-*'
+  - 'yamb-markdown'
+  - 'yamb-microtypo'
+  - 'yamb-render-json'
+  - 'yamb-storage-mongo'
+  - 'yamb-storage-sqlite'
   - microtypo
   - oxfmt
   - oxlint

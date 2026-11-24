@@ -202,23 +202,23 @@ importers:
         specifier: 1.95.0
         version: 1.95.0
       yamb:
-        specifier: 1.0.0
-        version: 1.0.0
+        specifier: 1.0.3
+        version: 1.0.3
       yamb-markdown:
         specifier: 0.1.2
-        version: 0.1.2(yamb@1.0.0)
+        version: 0.1.2(yamb@1.0.3)
       yamb-microtypo:
         specifier: 0.1.2
         version: 0.1.2
       yamb-render-json:
-        specifier: 0.1.2
-        version: 0.1.2(yamb@1.0.0)
+        specifier: 0.1.3
+        version: 0.1.3(yamb@1.0.3)
       yamb-storage-mongo:
         specifier: 0.1.2
-        version: 0.1.2(yamb@1.0.0)
+        version: 0.1.2(yamb@1.0.3)
       yamb-storage-sqlite:
         specifier: 0.1.1
-        version: 0.1.1(yamb@1.0.0)
+        version: 0.1.1(yamb@1.0.3)
 
 packages:
 
@@ -885,8 +885,8 @@ packages:
     resolution: {integrity: sha512-gW/f8U1LOx4keZ7dBy6rBKdQvCRq1hcgowDRFDFajjOd7t2mv8cGvxy487+qEPyGgkXkOy34Zka9oeSlnskdZw==}
     engines: {node: '>=26.13.0'}
 
-  yamb-render-json@0.1.2:
-    resolution: {integrity: sha512-E0QM0qD/F5Ax6CHfLWNszf1UFzW1RdCrf53vnxL/PDxlHgRyCBkxwRn1LDqsZlK+4df0iPFrvJUzQBIHv4Rblg==}
+  yamb-render-json@0.1.3:
+    resolution: {integrity: sha512-L3fz6q9YjTFJxK138sz93PYLUHfBGoa1Jiw11B/yDZHDOls94kSn1tDlz8gxpbGNlK9kWNNZOTZhCiM//2MxVg==}
     engines: {node: '>=26.13.0'}
     peerDependencies:
       yamb: ^1.0.0
@@ -903,8 +903,8 @@ packages:
     peerDependencies:
       yamb: ^1.0.0
 
-  yamb@1.0.0:
-    resolution: {integrity: sha512-h+rCo6B4uEgGYq62aC0ndpRXgsjTi9c9gEVIawYC4slBOg/RXtzPz4KahX26S3Byt/Nk5wrnWVnN4NmwPJ5UIQ==}
+  yamb@1.0.3:
+    resolution: {integrity: sha512-CD6q13DzvAW45ZkWqc6YmscYdTRvOs6wysJnFh+TQtWkYvOyn6uM9ZNm/orDF1obiPfSlXYJZkGWCmAZJN8uWQ==}
     engines: {node: '>=26.13.0'}
 
   zod@4.6.7:
@@ -1336,7 +1336,7 @@ snapshots:
       tr46: 6.0.0
       webidl-conversions: 8.0.1
 
-  yamb-markdown@0.1.2(yamb@1.0.0):
+  yamb-markdown@0.1.2(yamb@1.0.3):
     dependencies:
       '@mdit/plugin-inline-rule': 2.2.5(markdown-it@15.0.3)
       hast-util-from-html: 2.1.0
@@ -1348,21 +1348,21 @@ snapshots:
       markdown-it-mark: 4.0.0
       markdown-it-task-lists: 2.1.1
       property-information: 7.2.0
-      yamb: 1.0.0
+      yamb: 1.0.3
 
   yamb-microtypo@0.1.2:
     dependencies:
       microtypo: 0.4.1
 
-  yamb-render-json@0.1.2(yamb@1.0.0):
+  yamb-render-json@0.1.3(yamb@1.0.3):
     dependencies:
-      yamb: 1.0.0
+      yamb: 1.0.3
       zod: 4.6.7
 
-  yamb-storage-mongo@0.1.2(yamb@1.0.0):
+  yamb-storage-mongo@0.1.2(yamb@1.0.3):
     dependencies:
       mongodb: 7.9.1
-      yamb: 1.0.0
+      yamb: 1.0.3
       zod: 4.6.7
     transitivePeerDependencies:
       - '@aws-sdk/credential-providers'
@@ -1373,12 +1373,12 @@ snapshots:
       - snappy
       - socks
 
-  yamb-storage-sqlite@0.1.1(yamb@1.0.0):
+  yamb-storage-sqlite@0.1.1(yamb@1.0.3):
     dependencies:
-      yamb: 1.0.0
+      yamb: 1.0.3
       zod: 4.6.7
 
-  yamb@1.0.0:
+  yamb@1.0.3:
     dependencies:
       zod: 4.6.7
 
