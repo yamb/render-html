@@ -38,16 +38,13 @@ export function test(name, fn) {
       return;
     }
 
-    const inspector = new DatabaseSync(path, { readOnly: true });
-
-    try {
+    {
+      using inspector = new DatabaseSync(path, { readOnly: true });
       assert.equal(
         inspector.prepare('SELECT count(*) AS n FROM posts').get().n,
         0,
         'prepared SQLite must be empty before this scenario'
       );
-    } finally {
-      inspector.close();
     }
 
     try {

@@ -2,12 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { isDeepStrictEqual } from 'node:util';
 
-import { Post } from 'yamb';
 import { markdown } from 'yamb-markdown';
 import { prepare } from 'yamb/transform';
 
 import { html } from '../../src/index.js';
-import { buildView } from '../../src/views/post.js';
 import { blogWith } from '../perf/fixture.js';
 
 const CLOCK = () => Temporal.Instant.from('2026-04-26T12:00:00Z');
@@ -166,37 +164,32 @@ test('renderer does not mutate Post', async () => {
 });
 
 test('draft post (no publishedAt) omits publishedAt and publishedDate', async () => {
-  const fakePost = new Post(
-    { timeZone: 'Europe/Moscow', base: 'https://nko.io' },
-    {
-      id: 'post-draft',
-      uri: '2026/04/draft',
-      text: '',
-      slug: 'draft',
-      title: 'Draft',
-      preview: '',
-      cover: {},
-      tags: [],
-      author: { name: 'A' },
-      links: { related: [] },
-      meta: {},
-      social: {},
-      status: 'draft',
-      createdAt: Temporal.Instant.from('2026-04-26T10:00:00Z'),
-      updatedAt: Temporal.Instant.from('2026-04-26T10:00:00Z'),
-      publishedAt: undefined
-    }
-  );
+  const data = {
+    id: 'post-draft',
+    uri: 'drafts/draft',
+    text: '',
+    slug: 'draft',
+    title: 'Draft',
+    preview: '',
+    cover: {},
+    tags: [],
+    author: { name: 'A' },
+    links: { related: [] },
+    meta: {},
+    social: {},
+    status: 'draft',
+    createdAt: '2026-04-26T10:00:00Z',
+    updatedAt: '2026-04-26T10:00:00Z',
+    options: {}
+  };
+  const renderer = html({
+    prepare: () => ({ title: 'Draft', text: { html: '<p>wip</p>' }, cover: {} })
+  });
 
-  const ctx = {
-    yamb: {},
-    format: 'html',
-    scope: 'post',
+  const out = await renderer.post(data, {
     timeZone: 'Europe/Moscow',
     base: new URL('https://nko.io')
-  };
-
-  const out = await buildView(fakePost.toJSON(), ctx, { body: '<p>wip</p>', preview: '' });
+  });
   assert.equal('publishedAt' in out, false);
   assert.equal('publishedDate' in out, false);
   assert.equal('text' in out, false);
@@ -205,7 +198,25 @@ test('draft post (no publishedAt) omits publishedAt and publishedDate', async ()
   assert.equal(out.body, '<p>wip</p>');
   assert.equal(out.preview, '');
   assert.equal(out.status, 'draft');
-  assert.equal(typeof out.createdAt, 'string');
+  assert.equal(out.createdAt, '2026-04-26T10:00:00Z');
+});
+
+test('direct PostData instants become canonical UTC strings with a local publication date', async () => {
+  const out = await html().post(
+    {
+      uri: '2026/11/late',
+      title: 'Late',
+      createdAt: '2026-11-10T09:00:00.000000000Z',
+      updatedAt: '2026-11-10T12:00:00.5+03:00',
+      publishedAt: '2026-11-10T23:30:00-02:00'
+    },
+    { base: new URL('https://nko.io'), timeZone: 'Europe/Moscow' }
+  );
+
+  assert.equal(out.createdAt, '2026-11-10T09:00:00Z');
+  assert.equal(out.updatedAt, '2026-11-10T09:00:00.5Z');
+  assert.equal(out.publishedAt, '2026-11-11T01:30:00Z');
+  assert.equal(out.publishedDate, '2026-11-11');
 });
 
 test('signal abort throws AbortError', async () => {

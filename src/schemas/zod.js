@@ -1,17 +1,50 @@
 import { z } from 'zod';
 
-import { CoverSchema } from '#core/schemas';
+import {
+  AuthorSchema,
+  CoverSchema,
+  InstantSchema,
+  LinksSchema,
+  MetaSchema,
+  PostOptionsSchema,
+  PreviewSchema,
+  SlugSchema,
+  SocialSchema,
+  StatusSchema,
+  TagsSchema,
+  TextSchema,
+  TitleSchema,
+  UriSchema
+} from '#core/schemas';
 
 const derived = z.string().refine((value) => value.length <= 5000000, {
   error: 'derived field exceeds 5000000 UTF-16 units',
   abort: true
 });
-const metadata = CoverSchema.in;
 
 export const ConfigSchema = z.strictObject({ prepare: z.function().optional() });
 
-export const PreparedCoverSchema = z.strictObject({
-  ...metadata.shape,
+export const SourceSchema = z.object({
+  uri: UriSchema,
+  slug: SlugSchema.optional(),
+  title: z.string().max(500).pipe(TitleSchema),
+  status: StatusSchema.optional(),
+  text: TextSchema.default(''),
+  preview: PreviewSchema.optional(),
+  cover: CoverSchema.default(() => ({})),
+  tags: TagsSchema.default(() => []),
+  links: LinksSchema.default(() => ({ related: [] })),
+  author: AuthorSchema.default(() => ({})),
+  meta: MetaSchema.default(() => ({})),
+  social: SocialSchema.default(() => ({})),
+  createdAt: InstantSchema.optional(),
+  updatedAt: InstantSchema.optional(),
+  publishedAt: InstantSchema.optional(),
+  options: PostOptionsSchema.optional()
+});
+
+const PreparedCoverSchema = z.strictObject({
+  ...CoverSchema.in.shape,
   alt: derived.optional(),
   caption: derived.optional(),
   url: derived
@@ -21,26 +54,19 @@ export const PreparedCoverSchema = z.strictObject({
         return false;
       }
 
-      if (value === '') {
+      if (value === '' || value.startsWith('/') || value.startsWith('./')) {
         return true;
       }
 
-      if (value.startsWith('/') || value.startsWith('./')) {
-        return URL.canParse(value, 'https://example.invalid/');
-      }
+      const url = /^https?:\/\//i.test(value) ? URL.parse(value) : null;
 
-      if (!/^https?:\/\//i.test(value)) {
-        return false;
-      }
-
-      const url = URL.parse(value);
-
-      return Boolean(url) && !url.username && !url.password;
+      return url !== null && !url.username && !url.password;
     }, 'invalid prepared cover URL')
     .optional()
 });
 
 const ContentSchema = z.object({ html: derived });
+
 export const PreparedSchema = z.object({
   title: derived,
   text: ContentSchema,

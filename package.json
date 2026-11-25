@@ -1,6 +1,6 @@
 {
   "name": "yamb-render-html",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "HTML views for Yamb posts with optional preparation",
   "keywords": [
     "blog",

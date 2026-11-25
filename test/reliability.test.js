@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import { html } from '../src/index.js';
 import { content } from './helpers/content.js';
+import { blogWith } from './perf/fixture.js';
 
 const ctx = { timeZone: 'UTC', base: new URL('https://example.test') };
 const source = { title: 'Raw', uri: 'drafts/raw', text: '' };
@@ -29,13 +30,60 @@ test('literal boundaries enforce source UTF-16 ceilings and do not parse patholo
   assert.equal(view.preview, '😀'.repeat(2500));
 });
 
+test('invalid PostData metadata fails before preparation or related lookups', async () => {
+  let calls = 0;
+  const renderer = html({
+    prepare() {
+      calls++;
+      return { title: 'T', text: { html: '' }, cover: {} };
+    }
+  });
+  const yamb = {
+    find() {
+      calls++;
+      return null;
+    }
+  };
+  await using blog = await blogWith([], { renderers: { html: renderer } });
+  const live = await blog.create({ title: 'Live' });
+
+  for (const change of [
+    { publishedAt: 'yesterday' },
+    { publishedAt: null },
+    { createdAt: { toString: () => '2026-11-10T09:00:00Z' } },
+    { updatedAt: 0 },
+    { links: { related: 'abc' } },
+    { links: { related: Array.from({ length: 51 }, (_, i) => `id-${i}`) } },
+    { author: { name: 'A', url: 'javascript:alert(1)' } },
+    { social: { image: 'javascript:alert(1)' } },
+    { status: 'public' },
+    { tags: 'js' }
+  ]) {
+    const post = { ...source, ...change };
+
+    await assert.rejects(renderer.post(post, { ...ctx, yamb }), { code: 'YAMB_RENDERER_INPUT' });
+    await assert.rejects(blog.render('html', { post }), { code: 'YAMB_RENDERER_INPUT' });
+  }
+
+  await assert.rejects(renderer.post(live, { ...ctx, yamb }), { code: 'YAMB_RENDERER_INPUT' });
+  assert.equal(calls, 0);
+});
+
 test('preparation rejects wrong representations and oversized derived fields without partial views', async () => {
   for (const prepared of [
     null,
     'html',
     { ...source, text: {} },
     { title: 'T', text: { html: 'x'.repeat(5000001) }, cover: {} },
-    { title: 'T', text: { html: '' }, cover: { url: 'javascript:x' } },
+    ...[
+      'javascript:x',
+      'data:image/svg+xml,<svg onload=alert(1)>',
+      '//outside.test/a.jpg',
+      '/\\outside.test/a.jpg',
+      'java\tscript:x',
+      'https://user:secret@example.test/a.jpg',
+      'https://example.test/a b.jpg'
+    ].map((url) => ({ title: 'T', text: { html: '' }, cover: { url } })),
     {
       title: 'T',
       text: { html: '' },
