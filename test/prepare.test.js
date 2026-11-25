@@ -130,6 +130,38 @@ test('direct rendering captures every metadata field before callback or related-
   assert.deepEqual(view.links.related, ['2026/11/related']);
 });
 
+test('a callback editing its source copy leaves the view metadata unchanged', async () => {
+  const source = {
+    ...post(),
+    slug: 'article',
+    tags: ['old'],
+    author: { name: 'old' },
+    meta: { keywords: ['old'] },
+    social: { title: 'old' },
+    options: { nested: { list: ['old'] } }
+  };
+  const before = structuredClone(source);
+  const view = await html({
+    prepare(copy) {
+      copy.slug = 'new';
+      copy.tags.push('new');
+      copy.author.name = 'new';
+      copy.meta.keywords.push('new');
+      copy.social.title = 'new';
+      copy.options.nested.list.push('new');
+      return { title: 'T', text: { html: '' }, cover: {} };
+    }
+  }).post(source, ctx);
+
+  assert.equal(view.slug, before.slug);
+  assert.deepEqual(view.tags, before.tags);
+  assert.deepEqual(view.author, before.author);
+  assert.deepEqual(view.meta, before.meta);
+  assert.deepEqual(view.social, before.social);
+  assert.deepEqual(view.options, before.options);
+  assert.deepEqual(source, before);
+});
+
 test('derived title, alt, caption and resolved URLs use output budgets', async (t) => {
   const prepareContent = content(t);
   const source = {

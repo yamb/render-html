@@ -8,7 +8,7 @@ For GitHub Packages, route the `@yamb` scope to `https://npm.pkg.github.com` and
 
 ## Quick start
 
-Requires Node.js 26.13 or later and `yamb`. Direct rendering needs no storage.
+Requires Node.js 26.13 or later and `yamb` 1.1.0 or later. Direct rendering needs no storage.
 
 ```bash
 pnpm add yamb yamb-render-html
@@ -87,7 +87,7 @@ console.log(view.body);
 
 Reuse the Markdown and MicroTypo owners and close them after preparation completes. See [Markdown](https://github.com/yamb/markdown#reference) for stage shapes and sanitation and [MicroTypo](https://github.com/yamb/microtypo#reference) for typography settings.
 
-Direct calls take PostData with a canonical `uri`, a `ctx.base` URL and `ctx.timeZone`. The renderer snapshots source metadata before calling `prepare` with a separate copy. Related IDs resolve in order through `ctx.yamb.find(id, { signal })`; only current published targets contribute URIs.
+Direct calls take PostData with a canonical `uri`, a `ctx.base` URL and `ctx.timeZone`. The renderer snapshots the source, validates every field it reads with core’s post schemas and passes the snapshot to `prepare`; the view keeps its own copy. A live Post fails; pass `post.toJSON()`. Related IDs resolve in order through `ctx.yamb.find(id, { signal })`; only current published targets contribute URIs.
 
 ### View
 
@@ -101,8 +101,8 @@ Direct calls take PostData with a canonical `uri`, a `ctx.base` URL and `ctx.tim
 | `cover` | Prepared cover, or validated source cover in literal mode; defaults to `{}` |
 | `tags`, `author`, `meta`, `social` | Captured source values; default to `[]`, `{}`, `{}`, `{}` |
 | `links` | `{ related: string[] }`, containing resolved published URIs |
-| `createdAt`, `updatedAt` | String values, included when present and truthy in the source |
-| `publishedAt`, `publishedDate` | Included when source `publishedAt` is truthy; instant string and `YYYY-MM-DD` in `ctx.timeZone` |
+| `createdAt`, `updatedAt` | UTC instant strings, included when present in the source |
+| `publishedAt`, `publishedDate` | Included when source `publishedAt` is present; UTC instant string and `YYYY-MM-DD` in `ctx.timeZone` |
 
 View objects own their nested metadata. Read the source ID and Markdown from the Post, and the final HAST from PreparedPost. In lists, use `prepared.preview === undefined ? prepared.text.html : prepared.preview.html` to preserve an explicitly empty preview.
 
@@ -110,7 +110,7 @@ View objects own their nested metadata. Read the source ID and Markdown from the
 
 The renderer passes prepared HTML through to `body` and `preview`. A custom `prepare` must sanitize both fragments. In the Markdown pipeline, run `md.clean()` after the last HTML-producing stage. Escape plain fields and attribute values in templates.
 
-Source title, text and preview are limited to 500, 1048576 and 5000 UTF-16 units. Prepared title, body, preview, cover URL, alt and caption each allow 5000000 units. The core cover rules still apply to URL syntax and dimensions.
+Source title, text and preview are limited to 500, 1048576 and 5000 UTF-16 units, and a post resolves at most 50 related IDs. Prepared title, body, preview, cover URL, alt and caption each allow 5000000 units. The core cover rules still apply to URL syntax and dimensions.
 
 Invalid source or prepared fields fail with `YAMB_RENDERER_INPUT`. Direct `renderer.post` calls propagate callback errors; registered calls use core’s renderer error boundary. Cancellation preserves the native reason.
 

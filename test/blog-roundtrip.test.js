@@ -354,11 +354,11 @@ test('next() excludes future-dated published posts (clock cap)', async () => {
   });
 });
 
-test('create() with an invalid status is rejected (whole-object validation)', async () => {
+test('create() with an invalid status is rejected', async () => {
   await withBlog(async (blog) => {
     await assert.rejects(
       () => blog.create({ title: 'X', text: '...', status: 'TOTALLY_INVALID' }),
-      { code: 'YAMB_POST_VALIDATION' }
+      { code: 'YAMB_POST_STATUS_INVALID' }
     );
 
     assert.deepEqual(await blog.all().toArray(), []);

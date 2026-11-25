@@ -1,27 +1,43 @@
 import { RendererInputError } from '#core/errors';
-import { CoverSchema, PreviewSchema, TextSchema, TitleSchema, UriSchema } from '#core/schemas';
 
-import { PreparedSchema } from '../../schemas/zod.js';
+import { PreparedSchema, SourceSchema } from '../../schemas/zod.js';
 import { buildView } from '../../views/post.js';
 import { getState } from '../internal.js';
 
+const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
 function escape(value) {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
+  return value.replaceAll(/[&<>"']/g, (char) => entities[char]);
 }
 
-function literal(post, cover) {
-  const prepared = { title: post.title, text: { html: escape(post.text ?? '') }, cover };
+function literal(data) {
+  const prepared = { title: data.title, text: { html: escape(data.text) }, cover: data.cover };
 
-  if (post.preview !== undefined) {
-    prepared.preview = { html: escape(post.preview) };
+  if (data.preview !== undefined) {
+    prepared.preview = { html: escape(data.preview) };
   }
 
   return prepared;
+}
+
+function snapshot(post) {
+  try {
+    return structuredClone(post);
+  } catch (cause) {
+    throw new RendererInputError('html post renderer requires PostData; use post.toJSON()', {
+      cause
+    });
+  }
+}
+
+function parse(schema, value, message) {
+  const result = schema.safeParse(value);
+
+  if (!result.success) {
+    throw new RendererInputError(message, { details: { issues: result.error.issues } });
+  }
+
+  return result.data;
 }
 
 export default {
@@ -30,45 +46,19 @@ export default {
   async fn(renderer, post, ctx) {
     ctx.signal?.throwIfAborted();
 
-    if (
-      !post ||
-      !UriSchema.safeParse(post.uri).success ||
-      typeof post.title !== 'string' ||
-      post.title.length > 500 ||
-      !TitleSchema.safeParse(post.title).success ||
-      !TextSchema.safeParse(post.text ?? '').success ||
-      post.text === null ||
-      !PreviewSchema.optional().safeParse(post.preview).success
-    ) {
-      throw new RendererInputError('html post renderer requires valid PostData');
-    }
-
-    const cover = CoverSchema.safeParse(post.cover === undefined ? {} : post.cover);
-
-    if (!cover.success) {
-      throw new RendererInputError('invalid cover', { details: { issues: cover.error.issues } });
-    }
-
-    const source = structuredClone(post);
+    const source = snapshot(post);
+    const data = parse(SourceSchema, source, 'html post renderer requires valid PostData');
     const { config } = getState(renderer);
-    const prepared = config.prepare
-      ? await config.prepare(structuredClone(source), ctx)
-      : literal(source, cover.data);
+    const prepared = config.prepare ? await config.prepare(source, ctx) : literal(data);
     ctx.signal?.throwIfAborted();
 
-    const result = PreparedSchema.safeParse(prepared);
+    const result = parse(PreparedSchema, prepared, 'invalid prepared post');
 
-    if (!result.success) {
-      throw new RendererInputError('invalid prepared post', {
-        details: { issues: result.error.issues }
-      });
-    }
-
-    return buildView(source, ctx, {
-      title: result.data.title,
-      body: result.data.text.html,
-      preview: result.data.preview?.html ?? '',
-      cover: result.data.cover
+    return buildView(data, ctx, {
+      title: result.title,
+      body: result.text.html,
+      preview: result.preview?.html ?? '',
+      cover: result.cover
     });
   }
 };
